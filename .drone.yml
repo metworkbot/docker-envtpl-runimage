@@ -1,0 +1,28 @@
+pipeline:
+  docker_master:
+    image: plugins/docker
+    secrets: [ docker_username, docker_password ]
+    repo: metwork/envtpl-runimage
+    tags:
+      - latest
+      - ${DRONE_BRANCH}
+    when:
+      branch: master
+      event: push
+  docker_not_master:
+    image: plugins/docker
+    secrets: [ docker_username, docker_password ]
+    repo: metwork/envtpl-runimage
+    tags:
+      - ${DRONE_BRANCH}
+    when:
+      event: push
+      branch: 
+        exclude: [ master ]
+  slack:
+    image: plugins/slack
+    channel: dev
+    username: drone
+    when:
+      status: [ failure ]
+    secrets: [ slack_webhook ]
